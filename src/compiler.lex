@@ -2,15 +2,16 @@
 #include <stdio.h>
 #include <string.h>
 
-#define SYMBOLS_NUM 30
-int unknown_count = 0;
-int convert(char* c);
-unsigned int symbol_count[SYMBOLS_NUM] = {0};
-const char* symbols[SYMBOLS_NUM] = { "&", "(", ")", "*", "+", ",", "-", "/", ":=",       \
-                                     ";", "<", "<=", "<>", "=", ">", ">=", "|",          \
-                                     "COMENTARIO", "do", "else", "end", "function", "if",\
-                                     "IDENTIFICADOR", "in", "INTEIRO", "let", "then",    \
-                                     "var", "while"};
+#define MAX_TOKEN 999
+
+
+char tokens[MAX_TOKEN][999];
+unsigned int n_tokens = 0;
+unsigned int head_tokens = 0;
+
+
+void add_token(char* c);
+char* get_next_token();
 %}
 
 %x COMMENT
@@ -18,12 +19,37 @@ const char* symbols[SYMBOLS_NUM] = { "&", "(", ")", "*", "+", ",", "-", "/", ":=
 DIGIT		[0-9]
 ID			[a-zA-Z][a-zA-Z0-9_]*
 KEYWORD let|add|print
-SYMBOL  ":="|";"|","|"("|")"|"+"|"-"|"*"|"/"|"="|"<>"|">"|"<"|">="|"<="|"&"|"|"
+SYMBOL  "="|"+"
 BLANK   [ \t\n]+
 
 %%
-{KEYWORD}           { symbol_count[convert(yytext)] += 1; }
-{DIGIT}+	          { symbol_count[convert("INTEIRO")] += 1; }
-{ID}			          { symbol_count[convert("IDENTIFICADOR")] += 1; }
-{SYMBOL}            { symbol_count[convert(yytext)] += 1; }
+{KEYWORD}           { add_token(yytext); }
+{DIGIT}+	          { add_token(yytext); }
+{ID}			          { add_token(yytext);}
+{SYMBOL}            {add_token(yytext); }
 %%
+
+
+
+void add_token(char* c){
+    strcpy(tokens[n_tokens], c);
+    n_tokens++;
+}
+char* get_next_token(){
+    if(head_tokens >= 0 && head_tokens < n_tokens){
+        return tokens[head_tokens++];
+    }
+    return NULL;
+}
+int main(){
+
+    yylex();
+    char* token;
+    int i=0;
+    while(token = get_next_token()){
+        printf("token %d:\n", i);
+        printf("%s\n", token);
+        i++;
+    }
+    return 0;
+}
