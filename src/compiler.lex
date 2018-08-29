@@ -30,7 +30,7 @@ BLANK   [ \t\n]+
 %%
 
 
-
+//TODO: handle letter case
 void add_token(char* c){
     strcpy(tokens[n_tokens], c);
     n_tokens++;
@@ -41,15 +41,7 @@ char* get_next_token(){
     }
     return NULL;
 }
-int main(){
 
+void init_lexical(){
     yylex();
-    char* token;
-    int i=0;
-    while(token = get_next_token()){
-        printf("token %d:\n", i);
-        printf("%s\n", token);
-        i++;
-    }
-    return 0;
 }
