@@ -64,7 +64,7 @@ void init_regex(){
 
 
 int main(){
-    char* first_token; char* sec_token; char* third_token; char* fourth_token;
+    Token* first_token; char* sec_token; char* third_token; char* fourth_token;
     int i=0;
 
 
@@ -75,70 +75,71 @@ int main(){
     //TODO: print the line where the error occurred
     //TODO: check if ID is not KEYWORD, EQUAL or PLUS
     while(first_token = get_next_token()){
-        // printf("%s\n", token);
-        printf("token %d:\n", i);
-
-        //Attribute
-        if(strcmp(first_token, "let") == 0){
-                sec_token = get_next_token();
-                if(regexec(&ID_REGEX, sec_token, 0, NULL, 0) == 0){
-                    third_token = get_next_token();
-                    if(regexec(&EQUAL_REGEX, third_token, 0, NULL, 0) == 0){
-                        fourth_token = get_next_token();
-                        if(regexec(&DIGIT_REGEX, fourth_token, 0, NULL, 0) == 0){
-                            printf("Ok\n");
-                            attribute_variable(sec_token, fourth_token);
-                        }else{
-                            printf("erro %s\n", fourth_token);
-                            printf("Error M");
-                            exit(1);
-                        }
-                    }else{
-                        printf("Error N");
-                        exit(1);
-                    }
-                }else{
-                    printf("Error Y");
-                    exit(1);
-                }
-        }else if(strcmp(first_token, "add") == 0){
-            sec_token = get_next_token();
-            if(regexec(&ID_REGEX, sec_token, 0, NULL, 0) == 0){
-                third_token = get_next_token();
-                if(regexec(&PLUS_REGEX, third_token, 0, NULL, 0) == 0){
-                    fourth_token = get_next_token();
-                    //ID or digit
-                    if(regexec(&DIGIT_REGEX, fourth_token, 0, NULL, 0) == 0){
-                        printf("Ok\n");
-                        attribute_variable(sec_token, fourth_token);
-                    }else{
-                        printf("Error A:  %s", fourth_token);
-                        exit(1);
-                    }
-                }else{
-                    printf("Error B: %s", third_token);
-                    exit(1);
-                }
-            }else{
-                printf("Error C");
-                exit(1);
-            }
-
-        }else if(strcmp(first_token, "print") == 0){
-            sec_token = get_next_token();
-            if(regexec(&ID_REGEX, sec_token, 0, NULL, 0) == 0){
-                printf("ok\n");
-                print_variable(sec_token);
-            }else{
-                printf("Error Print");
-                exit(1);
-            }
-        }else{
-            printf("%s\n", first_token);
-            printf("Error D");
-            exit(1);
-        }
-        i++;
+    //     // printf("%s\n", token);
+    //     printf("token %d:\n", i);
+    //
+    //     //Attribute
+    //     if(strcmp(first_token, "let") == 0){
+    //             sec_token = get_next_token();
+    //             if(regexec(&ID_REGEX, sec_token, 0, NULL, 0) == 0){
+    //                 third_token = get_next_token();
+    //                 if(regexec(&EQUAL_REGEX, third_token, 0, NULL, 0) == 0){
+    //                     fourth_token = get_next_token();
+    //                     if(regexec(&DIGIT_REGEX, fourth_token, 0, NULL, 0) == 0){
+    //                         printf("Ok\n");
+    //                         attribute_variable(sec_token, fourth_token);
+    //                     }else{
+    //                         printf("erro %s\n", fourth_token);
+    //                         printf("Error M");
+    //                         exit(1);
+    //                     }
+    //                 }else{
+    //                     printf("Error N");
+    //                     exit(1);
+    //                 }
+    //             }else{
+    //                 printf("Error Y");
+    //                 exit(1);
+    //             }
+    //     }else if(strcmp(first_token, "add") == 0){
+    //         sec_token = get_next_token();
+    //         if(regexec(&ID_REGEX, sec_token, 0, NULL, 0) == 0){
+    //             third_token = get_next_token();
+    //             if(regexec(&PLUS_REGEX, third_token, 0, NULL, 0) == 0){
+    //                 fourth_token = get_next_token();
+    //                 //ID or digit
+    //                 if(regexec(&DIGIT_REGEX, fourth_token, 0, NULL, 0) == 0){
+    //                     printf("Ok\n");
+    //                     attribute_variable(sec_token, fourth_token);
+    //                 }else{
+    //                     printf("Error A:  %s", fourth_token);
+    //                     exit(1);
+    //                 }
+    //             }else{
+    //                 printf("Error B: %s", third_token);
+    //                 exit(1);
+    //             }
+    //         }else{
+    //             printf("Error C");
+    //             exit(1);
+    //         }
+    //
+    //     }else if(strcmp(first_token, "print") == 0){
+    //         sec_token = get_next_token();
+    //         if(regexec(&ID_REGEX, sec_token, 0, NULL, 0) == 0){
+    //             printf("ok\n");
+    //             print_variable(sec_token);
+    //         }else{
+    //             printf("Error Print");
+    //             exit(1);
+    //         }
+    //     }else{
+    //         printf("%s\n", first_token);
+    //         printf("Error D");
+    //         exit(1);
+    //     }
+    //     i++;
+    printf("symbol: %d value: %s\n", first_token->symbol, first_token->value);
     }
 
     return 0;
