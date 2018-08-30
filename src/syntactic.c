@@ -1,130 +1,119 @@
-      #include "lex.yy.c"
-      #include <regex.h>
-      #include <string.h>
-      #include <stdlib.h>
+#include "lex.yy.c"
+#include <regex.h>
+#include <string.h>
+#include <stdlib.h>
 
-      typedef struct{
-          char name[999];
-          int value;
-      } Variable;
+typedef struct{
+    char id[999];
+    int value;
+} Variable;
 
-      Variable variables[999];
-      unsigned int n_var=0;
-      unsigned int n_lines=0;
+Variable variables[999];
+unsigned int n_var=0;
+unsigned int n_line=0;
 
 
-      Variable* get_variable(char name[999]){
-          for(int i=0;i<n_var;++i){
-              if(strcmp(variables[i].name, name) == 0){
-                  return &variables[i];
-              }
+Variable* get_variable(char id[999]);
+void attribute_variable(char id[999], char value[999]);
+void add_variable(char id[999], char value[999]);
+void print_variable(char id[999]);
+void error_detected(Token* token);
+
+int main(){
+    Token* first_token; Token* sec_token;
+    Token* third_token; Token* fourth_token; Token* fifth_token;
+
+    init_lexical();
+
+    n_line = 1;
+    while(first_token = get_next_token()){
+      switch (first_token->symbol) {
+        case LET:
+          sec_token = get_next_token();
+          if(sec_token->symbol != ID){
+            error_detected(sec_token);
           }
-          strcpy(variables[n_var].name, name);
-          variables[n_var].value = 0;
-          return &variables[n_var++];
-      }
-
-      void attribute_variable(char name[999], char value[999]){
-          Variable* var = get_variable(name);
-          var->value = atoi(value);
-      }
-
-      void add_variable(char name[999], char value[999]){
-          Variable* var = get_variable(name);
-          printf("OLD: %d SUM: %d\n", var->value, atoi(value));
-          var->value += atoi(value);
-      }
-      void print_variable(char name[999]){
-          Variable* var = get_variable(name);
-          printf("%d\n", var->value);
-      }
-      int main(){
-          Token* first_token; Token* sec_token;
-          Token* third_token; Token* fourth_token; Token* fifth_token;
-          int i=0;
-
-          init_lexical();
-          
-          //TODO: print the line where the error occurred
-          while(first_token = get_next_token()){
-              // printf("%s\n", token);
-
-              //Attribute
-              if(first_token->symbol ==  LET){
-                      sec_token = get_next_token();
-                      if(sec_token->symbol == ID){
-                          third_token = get_next_token();
-                          if(third_token->symbol == EQUAL){
-                              fourth_token = get_next_token();
-                              if(fourth_token->symbol == INTEGER){
-                                  fifth_token = get_next_token();
-                                  if(fifth_token->symbol == ENDLINE || !fifth_token){
-                                    n_lines++;
-                                    attribute_variable(sec_token->value, fourth_token->value);
-                                  }else{
-                                    printf("Error at %d\n", n_lines);
-                                  }
-                              }else{
-                                  // printf("erro %s\n", fourth_token);
-                                  printf("Error M");
-                                  exit(1);
-                              }
-                          }else{
-                              printf("Error N");
-                              exit(1);
-                          }
-                      }else{
-                          printf("Error Y");
-                          exit(1);
-                      }
-              }else if(first_token->symbol ==  ADD){
-                  sec_token = get_next_token();
-                  if(sec_token->symbol == ID){
-                      third_token = get_next_token();
-                      if(third_token->symbol ==  PLUS){
-                          fourth_token = get_next_token();
-                          //ID or digit
-                          if(fourth_token->symbol == INTEGER){
-                            fifth_token = get_next_token();
-                            if(fifth_token->symbol== ENDLINE || !fifth_token){
-                              n_lines++;
-                              add_variable(sec_token->value, fourth_token->value);
-                            }else{
-                              printf("Error at %d\n", n_lines);
-                            }
-                          }else{
-                              // printf("Error A:  %s", fourth_token);
-                              exit(1);
-                          }
-                      }else{
-                          // printf("Error B: %s", third_token);
-                          exit(1);
-                      }
-                  }else{
-                      printf("Error C");
-                      exit(1);
-
-                  }
-              }else if(first_token->symbol == PRINT){
-                  sec_token = get_next_token();
-                  if(sec_token->symbol == ID){
-                    third_token = get_next_token();
-                    if(third_token->symbol == ENDLINE || !third_token){
-                      n_lines++;
-                      print_variable(sec_token->value);
-                    }else{
-                      printf("Error at %d\n", n_lines);
-                    }
-                  }else{
-                    printf("Error at %d\n", n_lines);
-                  }
-                }else{
-                    printf("Error Print");
-                    exit(1);
-                }
-              i++;
-          printf("symbol: %d value: %s\n", first_token->symbol, first_token->value);
+          third_token = get_next_token();
+          if(third_token->symbol != EQUAL){
+            error_detected(third_token);
           }
-
-          return 0;
+          fourth_token = get_next_token();
+          if(fourth_token->symbol != INTEGER){
+            error_detected(fourth_token);
+          }
+          fifth_token = get_next_token();
+          if(fifth_token->symbol != ENDLINE && fifth_token){
+            error_detected(fifth_token);
+          }
+          n_line++;
+          attribute_variable(sec_token->value, fourth_token->value);
+          break;
+        case ADD:
+          sec_token = get_next_token();
+          if(sec_token->symbol != ID){
+            error_detected(sec_token);
+          }
+          third_token = get_next_token();
+          if(third_token->symbol !=  PLUS){
+            error_detected(third_token);
+          }
+          fourth_token = get_next_token();
+          if(fourth_token->symbol != INTEGER){
+            error_detected(fourth_token);
+          }
+          fifth_token = get_next_token();
+          if(fifth_token->symbol != ENDLINE && fifth_token){
+            error_detected(fifth_token);
+          }
+          n_line++;
+          add_variable(sec_token->value, fourth_token->value);
+          break;
+        case PRINT:
+          sec_token = get_next_token();
+          if(sec_token->symbol != ID){
+            error_detected(sec_token);
+          }
+          third_token = get_next_token();
+          if(third_token->symbol != ENDLINE && third_token){
+            error_detected(third_token);
+          }
+          n_line++;
+          print_variable(sec_token->value);
+          break;
+        default:
+          error_detected(first_token);
       }
+    }
+
+    return 0;
+}
+
+Variable* get_variable(char id[999]){
+    for(int i=0;i<n_var;++i){
+        if(strcmp(variables[i].id, id) == 0){
+            return &variables[i];
+        }
+    }
+    strcpy(variables[n_var].id, id);
+    variables[n_var].value = 0;
+    return &variables[n_var++];
+}
+
+void attribute_variable(char id[999], char value[999]){
+    Variable* var = get_variable(id);
+    var->value = atoi(value);
+}
+
+void add_variable(char id[999], char value[999]){
+    Variable* var = get_variable(id);
+    var->value += atoi(value);
+}
+void print_variable(char id[999]){
+    Variable* var = get_variable(id);
+    printf("%d\n", var->value);
+}
+
+void error_detected(Token* token){
+  fprintf(stderr, "Error detected in line %d: %s\n", n_line, token->value);
+  exit(1);
+}

@@ -35,9 +35,6 @@ void add_plus(char *c);
 void add_endline(char *c);
 Token* get_next_token();
 %}
-
-%x COMMENT
-
 DIGIT		[0-9]
 SIGN    [+-]
 ID			[a-zA-Z][a-zA-Z0-9_]*
@@ -57,11 +54,7 @@ ENDLINE [\n]
 {EQUAL}            {add_equal(yytext); }
 {PLUS}            {add_plus(yytext); }
 {ENDLINE} {add_endline(yytext);}
-
 %%
-
-
-
 void add_token(Symbol symbol, char* value){
     tokens[n_tokens].symbol = symbol;
     strcpy(tokens[n_tokens].value, value);
