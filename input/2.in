@@ -1,0 +1,5 @@
+let a = +3
+add b + -4
+add b + 2
+print a
+print b

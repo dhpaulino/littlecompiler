@@ -11,7 +11,8 @@ typedef enum{
     ADD,
     PRINT,
     EQUAL,
-    PLUS
+    PLUS,
+    ENDLINE
 } Symbol;
 typedef struct{
     Symbol symbol;
@@ -31,12 +32,14 @@ void add_integer(char *c);
 void add_id(char *c);
 void add_equal(char *c);
 void add_plus(char *c);
+void add_endline(char *c);
 Token* get_next_token();
 %}
 
 %x COMMENT
 
 DIGIT		[0-9]
+SIGN    [+-]
 ID			[a-zA-Z][a-zA-Z0-9_]*
 LET let
 PRINT print
@@ -44,15 +47,16 @@ ADD add
 EQUAL "="
 PLUS "+"
 BLANK   [ \t]+
-ENDLINE [\n]+
+ENDLINE [\n]
 %%
 {LET}           { add_let(yytext); }
 {PRINT}           { add_print(yytext); }
 {ADD}           { add_add(yytext); }
-{DIGIT}+	          { add_integer(yytext); }
+{SIGN}*{DIGIT}+	          { add_integer(yytext); }
 {ID}			          { add_id(yytext);}
 {EQUAL}            {add_equal(yytext); }
 {PLUS}            {add_plus(yytext); }
+{ENDLINE} {add_endline(yytext);}
 
 %%
 
@@ -83,6 +87,9 @@ void add_equal(char *c){
 }
 void add_plus(char *c){
     add_token(PLUS, c);
+}
+void add_endline(char *c){
+    add_token(ENDLINE, c);
 }
 
 Token* get_next_token(){
