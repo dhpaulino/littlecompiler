@@ -1,15 +1,16 @@
 FLEX=flex
 CC=gcc
 SRC=src
-EXEC=exec
+BIN=bin
 all: compiler
 
-lex.yy.c: $(SRC)/compiler.lex
-	$(FLEX) $(SRC)/compiler.lex
+compiler.yy.c: $(SRC)/compiler.lex
+	$(FLEX)  -o $(SRC)/compiler.yy.c $(SRC)/compiler.lex
 
-compiler: lex.yy.c
-	$(CC) -o $(SRC)/lex.yy.c -O3 $(SRC)/lex.yy.c -lfl
+compiler: compiler.yy.c
+	$(CC) -o $(BIN)/compiler $(SRC)/syntactic.c -lfl
+	ln -s $(BIN)/compiler compiler
 
 #------------------------------------------------------------------------------
 clean :
-	$(RM) *.o
+	$(RM) compiler $(BIN)/* $(SRC)/compiler.yy.c

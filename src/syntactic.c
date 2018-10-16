@@ -1,10 +1,10 @@
-#include "lex.yy.c"
+#include "compiler.yy.c"
 #include <regex.h>
 #include <string.h>
 #include <stdlib.h>
 
 typedef struct{
-    char id[999];
+    char id[MAX_SIZE_TOKEN];
     int value;
 } Variable;
 
@@ -13,10 +13,10 @@ unsigned int n_var=0;
 unsigned int n_line=0;
 
 
-Variable* get_variable(char id[999]);
-void attribute_variable(char id[999], char value[999]);
-void add_variable(char id[999], char value[999]);
-void print_variable(char id[999]);
+Variable* get_variable(char id[MAX_SIZE_TOKEN]);
+void attribute_variable(char id[MAX_SIZE_TOKEN], char value[MAX_SIZE_TOKEN]);
+void add_variable(char id[MAX_SIZE_TOKEN], char value[MAX_SIZE_TOKEN]);
+void print_variable(char id[MAX_SIZE_TOKEN]);
 void error_detected(Token* token);
 
 int main(){
@@ -80,6 +80,9 @@ int main(){
           n_line++;
           print_variable(sec_token->value);
           break;
+        case ENDLINE:
+          n_line++;
+          break;
         default:
           error_detected(first_token);
       }
@@ -88,7 +91,7 @@ int main(){
     return 0;
 }
 
-Variable* get_variable(char id[999]){
+Variable* get_variable(char id[MAX_SIZE_TOKEN]){
     for(int i=0;i<n_var;++i){
         if(strcmp(variables[i].id, id) == 0){
             return &variables[i];
@@ -99,16 +102,16 @@ Variable* get_variable(char id[999]){
     return &variables[n_var++];
 }
 
-void attribute_variable(char id[999], char value[999]){
+void attribute_variable(char id[MAX_SIZE_TOKEN], char value[MAX_SIZE_TOKEN]){
     Variable* var = get_variable(id);
     var->value = atoi(value);
 }
 
-void add_variable(char id[999], char value[999]){
+void add_variable(char id[MAX_SIZE_TOKEN], char value[MAX_SIZE_TOKEN]){
     Variable* var = get_variable(id);
     var->value += atoi(value);
 }
-void print_variable(char id[999]){
+void print_variable(char id[MAX_SIZE_TOKEN]){
     Variable* var = get_variable(id);
     printf("%d\n", var->value);
 }
