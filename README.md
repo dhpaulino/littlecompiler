@@ -34,3 +34,16 @@ A really simple compiler for a really simple language
   2
   4
  ```
+
+## Dependencies
+
+* Flex
+* Make
+* GCC
+
+## Running
+
+```
+make
+./compiler < inputfile
+``` 
